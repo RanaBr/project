@@ -1,20 +1,36 @@
-import scipy.io.wavfile
+ import scipy.io.wavfile
 import scipy.signal
 import numpy as np
 from numpy import sin, cos ,pi , linspace
+import wave
+import sys
+import struct
 import matplotlib.pyplot as plt
-import sounddevice as sd
 from numpy.random import randn
 
 #lit un signak du fichier audio
 fs , signalOriginal = scipy.io.wavfile.read('erwin.wav')
 times = np.arange(len(signalOriginal))/fs
 
-print("signa=" , signalOriginal)
+print("signal= c" , signalOriginal)
 print("frequence= ",fs)
+
 # genere un signal bruyant
 t = linspace(-1 , 1,201)
 x = (sin(2*pi*0.75*t*(1-t)+2.1)+0.1*sin(2*pi*1.25*t+1)+0.18*cos(2*pi*3.85*t))
 xn=x +randn(len(t))*0.08
-#association  signal bruyant et  signal de départ
-signalbruit=signalOriginal + xn
+#association de signal d'entree et signal de bruit
+signalbruit = signalOriginal + xn
+
+
+#filtage
+spf = wave.open('erwin.wav.wav','r')
+
+#Extract Raw Audio from Wav File
+signal = spf.readframes(-1)
+signal = np.fromstring(signal, 'Int16')
+
+plt.figure(1)
+plt.title('Signal Wave...')
+plt.plot(signal)
+
